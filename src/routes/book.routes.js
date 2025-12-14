@@ -7,7 +7,7 @@ const getBook = async (req, res, next) => {
   let book;
   const { id } = req.params;
 
-  if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+  if (!id.match(/^[0-9a-fA-F]{24}$/)) { //chequea si es un id valido, config propia de mongo, si matecha o no con esa expresion regular
     return res.status(404).json({
       message: "ID de libro no valido",
     });
