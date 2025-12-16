@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const book = require("../models/book.models");
+const Book = require("../models/book.models");
+const { model } = require("mongoose");
 
 //MIDDLEWARE
 const getBook = async (req, res, next) => {
@@ -14,7 +15,7 @@ const getBook = async (req, res, next) => {
   }
 
   try {
-    book = await book.findById(id);
+    book = await Book.findById(id);
     if (!book) {
       return res.status(404).json({
         message: "No se encontro el libro",
@@ -33,12 +34,12 @@ const getBook = async (req, res, next) => {
 // Obtener todos los libros GET ALL
 router.get("/", async (req, res) => {
   try {
-    const books = await book.find();
-    console.log("get all", books);
+    const books = await Book.find();
+    console.log("GET ALL", books);
     if (books.length === 0) {
       return res.status(204).json([]);
     }
-    res(books);
+    res.json(books);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -53,7 +54,7 @@ router.post("/", async (req, res) => {
     });
   }
 
-  const book = new book({
+  const book = new Book({
     title,
     author,
     genre,
@@ -68,3 +69,5 @@ router.post("/", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+
+module.exports = router
