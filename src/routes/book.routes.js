@@ -70,4 +70,65 @@ router.post("/", async (req, res) => {
   }
 });
 
+
+// Obtener un libro por ID GET ONE
+router.get("/:id", getBook, async(req, res) => {
+  res.json(res.book);
+});
+
+
+// PUT
+router.put("/:id", getBook, async (req, res) => {
+  try {
+    const book = res.book;
+    book.title = req.body.title || book.title;
+    book.author = req.body.author || book.author;
+    book.genre = req.body.genre || book.genre;
+    book.publication_date = req.body.publication_date || book.publication_date;
+
+    const updatedBook = await book.save();
+    res.json(updatedBook);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+})
+
+
+// PATCH
+
+router.patch("/:id", getBook, async (req, res) => {
+
+  if(!req.body.title && !req.body.author && !req.body.genre && !req.body.publication_date){
+    return  res.status(400).json({
+      message: "Al menos uno de los campos (titulo, autor, genero, fecha de publicacion) debe ser proporcionado para la actualizacion parcial",
+    });
+  }
+
+   try {
+    const book = res.book;
+    book.title = req.body.title || book.title;
+    book.author = req.body.author || book.author;
+    book.genre = req.body.genre || book.genre;
+    book.publication_date = req.body.publication_date || book.publication_date;
+
+    const updatedBook = await book.save();
+    res.json(updatedBook);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+})
+
+
+// DELETE
+router.delete("/:id", getBook, async (req, res) => {
+  try {
+    const book = res.book;
+    await book.deleteOne({_id: book._id});
+    res.json({ message: "Libro eliminado" });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+})
+
 module.exports = router
