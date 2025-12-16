@@ -1,22 +1,22 @@
 const express = require("express");
-const mongoose = require("mongoose");
+const mongoose = require("mongoose"); 
 const bodyParser = require("body-parser");
 const { config } = require("dotenv");
 config();
 
-const bookRoutes = require("./routes/book.routes");
+const bookRoutes = require('./routes/book.routes');
 
-//EXPRESS PARA MIDDLEWARES
-const app = express();
-app.use(bodyParser.json()); //Parsea Bodies
+//express para middleware, PARSEA JSON  
+const app = express()
+app.use(bodyParser.json()); //parseador bodies
 
-//CONEXION BASE DE DATOS
-mongoose.connect(process.env.MONGO_URL, { dbName: process.env.MONGO_DB_NAME });
+
+// CONEXION A DB
+mongoose.connect(process.env.MONGODB_URL, {dbName: process.env.MONGO_DB_NAME})
+const port = process.env.PORT || 3000;
 const db = mongoose.connection;
 
-app.use("/books", bookRoutes);
-
-const port = process.env.PORT || 3000;
+app.use('/books', bookRoutes);
 
 app.listen(port, () => {
   console.log(`Server iniciado en puerto ${port}`);

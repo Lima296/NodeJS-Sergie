@@ -1,5 +1,5 @@
 {
-  "name": "node-crud",
+  "name": "crud",
   "version": "0.0.1",
   "description": "CRUD con NODE JS",
   "license": "ISC",
@@ -18,5 +18,13 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "mongoose": "^9.0.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lima296/NodeJS-Sergie.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Lima296/NodeJS-Sergie/issues"
+  },
+  "homepage": "https://github.com/Lima296/NodeJS-Sergie#readme"
 }

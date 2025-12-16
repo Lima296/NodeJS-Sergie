@@ -1,20 +1,21 @@
 const express = require("express");
 const router = express.Router();
-const book = require("../models/book.models");
+const Book = require("../models/book.models");
+const { model } = require("mongoose");
 
 //MIDDLEWARE
 const getBook = async (req, res, next) => {
   let book;
   const { id } = req.params;
 
-  if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+  if (!id.match(/^[0-9a-fA-F]{24}$/)) { //chequea si es un id valido, config propia de mongo, si matecha o no con esa expresion regular
     return res.status(404).json({
       message: "ID de libro no valido",
     });
   }
 
   try {
-    book = await book.findById(id);
+    book = await Book.findById(id);
     if (!book) {
       return res.status(404).json({
         message: "No se encontro el libro",
@@ -33,12 +34,12 @@ const getBook = async (req, res, next) => {
 // Obtener todos los libros GET ALL
 router.get("/", async (req, res) => {
   try {
-    const books = await book.find();
-    console.log("get all", books);
+    const books = await Book.find();
+    console.log("GET ALL", books);
     if (books.length === 0) {
       return res.status(204).json([]);
     }
-    res(books);
+    res.json(books);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -53,7 +54,7 @@ router.post("/", async (req, res) => {
     });
   }
 
-  const book = new book({
+  const book = new Book({
     title,
     author,
     genre,
@@ -68,3 +69,66 @@ router.post("/", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+
+
+// Obtener un libro por ID GET ONE
+router.get("/:id", getBook, async(req, res) => {
+  res.json(res.book);
+});
+
+
+// PUT
+router.put("/:id", getBook, async (req, res) => {
+  try {
+    const book = res.book;
+    book.title = req.body.title || book.title;
+    book.author = req.body.author || book.author;
+    book.genre = req.body.genre || book.genre;
+    book.publication_date = req.body.publication_date || book.publication_date;
+
+    const updatedBook = await book.save();
+    res.json(updatedBook);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+})
+
+
+// PATCH
+
+router.patch("/:id", getBook, async (req, res) => {
+
+  if(!req.body.title && !req.body.author && !req.body.genre && !req.body.publication_date){
+    return  res.status(400).json({
+      message: "Al menos uno de los campos (titulo, autor, genero, fecha de publicacion) debe ser proporcionado para la actualizacion parcial",
+    });
+  }
+
+   try {
+    const book = res.book;
+    book.title = req.body.title || book.title;
+    book.author = req.body.author || book.author;
+    book.genre = req.body.genre || book.genre;
+    book.publication_date = req.body.publication_date || book.publication_date;
+
+    const updatedBook = await book.save();
+    res.json(updatedBook);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+})
+
+
+// DELETE
+router.delete("/:id", getBook, async (req, res) => {
+  try {
+    const book = res.book;
+    await book.deleteOne({_id: book._id});
+    res.json({ message: "Libro eliminado" });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+})
+
+module.exports = router
